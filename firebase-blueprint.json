@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "AboutContent": {
+      "title": "AboutContent",
+      "description": "General text content for the about section, header, and goal statement.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "aboutTitle": { "type": "string" },
+        "aboutSubtitle": { "type": "string" },
+        "aboutDescription": { "type": "string" },
+        "aboutGoal": { "type": "string" },
+        "aboutImageUrl": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "aboutTitle", "aboutSubtitle", "aboutDescription", "aboutGoal", "aboutImageUrl"]
+    },
+    "Experience": {
+      "title": "Experience",
+      "description": "An experience milestone in the robot portfolio timeline.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "sortOrder": { "type": "integer" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "sortOrder"]
+    },
+    "Skill": {
+      "title": "Skill",
+      "description": "Skill tag highlighted in the skills section.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "sortOrder": { "type": "integer" }
+      },
+      "required": ["name", "sortOrder"]
+    },
+    "Certification": {
+      "title": "Certification",
+      "description": "A certificate or award received by the robot creator.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "icon": { "type": "string" },
+        "sortOrder": { "type": "integer" }
+      },
+      "required": ["title", "subtitle", "icon", "sortOrder"]
+    },
+    "PortfolioItem": {
+      "title": "PortfolioItem",
+      "description": "A detailed robot project or web app result.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "tags": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "sortOrder": { "type": "integer" },
+        "isVisible": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "tags", "imageUrl", "sortOrder", "isVisible"]
+    }
+  },
+  "firestore": {
+    "/siteContent/main": {
+      "schema": "AboutContent",
+      "description": "Singleton configuration document containing basic main about content."
+    },
+    "/experiences/{experienceId}": {
+      "schema": "Experience",
+      "description": "Milestone elements rendered in the central timeline."
+    },
+    "/skills/{skillId}": {
+      "schema": "Skill",
+      "description": "Highlights of technology modules used."
+    },
+    "/certifications/{certId}": {
+      "schema": "Certification",
+      "description": "Badges and awards section elements."
+    },
+    "/portfolio/{portfolioId}": {
+      "schema": "PortfolioItem",
+      "description": "Cards of individual robot items, each customizable."
+    }
+  }
+}

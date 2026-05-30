@@ -1,0 +1,6 @@
+{
+  "name": "My Robot Sirius Portfolio",
+  "description": "An interactive, highly detailed robot development and programming portfolio featuring real-time collaborative editing using Firestore.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

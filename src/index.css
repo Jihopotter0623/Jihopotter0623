@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-surface-variant: #253453;
+  --color-surface: #011230;
+  --color-surface-container-high: #192a48;
+  --color-surface-container-lowest: #000d27;
+  --color-surface-container-low: #091b39;
+  --color-surface-container: #0e1f3d;
+  --color-surface-container-highest: #253453;
+  --color-primary: #c3f5ff;
+  --color-primary-container: #00e5ff;
+  --color-primary-fixed: #9cf0ff;
+  --color-primary-fixed-dim: #00daf3;
+  --color-on-surface: #d8e2ff;
+  --color-on-surface-variant: #bac9cc;
+}
+
+.circuit-bg {
+  background-color: #011230;
+  background-image: radial-gradient(circle at 10px 10px, rgba(0, 229, 255, 0.04) 1.5px, transparent 0);
+  background-size: 32px 32px;
+}
+
+.neon-glow {
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.08);
+}
+
+.neon-glow-hover:hover {
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.2);
+}
+
+.card-border {
+  border: 1px solid #112240;
+}
+
+.glass-panel {
+  background: rgba(10, 25, 47, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.typing-cursor::after {
+  content: '_';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
