@@ -8,7 +8,7 @@ export const AdminBar: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const ADMIN_PASSWORD = "1234";
+  const ADMIN_PASSWORD = "0623";
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
