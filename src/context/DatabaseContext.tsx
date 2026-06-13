@@ -220,41 +220,74 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
   }, []);
 
-  // Upload routine into Storage
+  // Upload routine: Clientside resize compression to Base64 to bypass CORS constraints and Storage limitations cleanly
   const uploadFile = async (file: File, folder: string, onProgress?: (pct: number) => void): Promise<string> => {
     // Basic file protection
-    if (file.size > 5 * 1024 * 1024) {
-      throw new Error("File size must not exceed 5MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      throw new Error("File size must not exceed 10MB.");
     }
     if (!file.type.match(/^image\/(jpeg|jpg|png|webp|gif)$/)) {
       throw new Error("Only images (.jpg, .jpeg, .png, .webp, .gif) are permitted.");
     }
 
-    const uniqueName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
-    const fileRef = ref(storage, `${folder}/${uniqueName}`);
-    
     return new Promise((resolve, reject) => {
-      // Use Firebase SDK native upload bytes resumable for robust progress tracking
-      const uploadTask = uploadBytesResumable(fileRef, file);
-      
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (onProgress) onProgress(progress);
-        }, 
-        (error) => {
-          console.error("Storage upload error details:", error);
-          reject(new Error(`Storage transmission failed: ${error.message}`));
-        }, 
-        async () => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
           try {
-            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadUrl);
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            // Comfortable high quality bounds (e.g., maximum 800px width/height for fast loading)
+            const MAX_WIDTH = 900;
+            const MAX_HEIGHT = 900;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height = Math.round((height * MAX_WIDTH) / width);
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width = Math.round((width * MAX_HEIGHT) / height);
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              throw new Error("Canvas context is not available for image compression.");
+            }
+
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Standard JPEG with 0.75 quality fits very well in Firestore document model limits (<1MB)
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+
+            // Simulate progress ticks cleanly for smooth UI feedback
+            let progress = 0;
+            const interval = setInterval(() => {
+              progress += 20;
+              if (onProgress) onProgress(progress);
+              if (progress >= 100) {
+                clearInterval(interval);
+                resolve(compressedBase64);
+              }
+            }, 50);
           } catch (err) {
             reject(err);
           }
-        }
-      );
+        };
+        img.onerror = (err) => reject(new Error("Failed to load image for compression."));
+      };
+      reader.onerror = (err) => reject(new Error("Failed to read raw image file."));
     });
   };
 
