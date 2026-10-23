@@ -27,7 +27,7 @@ export const AdminBar: React.FC = () => {
   };
 
   return (
-    <>
+    <div id="admin-bar-container">
       {/* Sticky Edit Mode Active Banner */}
       {isEditMode && (
         <div className="fixed top-0 left-0 right-0 z-[80] bg-primary-container text-surface-container-lowest font-headline font-bold text-center py-2.5 px-4 shadow-lg flex items-center justify-center gap-4 text-xs tracking-wider animate-bounce-short">
@@ -130,6 +130,6 @@ export const AdminBar: React.FC = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

@@ -7,7 +7,8 @@ import { SkillsSection } from './components/SkillsSection';
 import { CertificationsSection } from './components/CertificationsSection';
 import { PortfolioSection } from './components/PortfolioSection';
 import { EditDialog } from './components/EditDialog';
-import { Loader2, Terminal, Shield } from 'lucide-react';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { Terminal, Shield } from 'lucide-react';
 
 function AppContent() {
   const { loading, about, isEditMode } = useDatabase();
@@ -26,24 +27,22 @@ function AppContent() {
     setDialogOpen(true);
   };
 
-  // Sleek system boot spinner on startup
-  if (loading) {
-    return (
-      <div className="fixed inset-0 bg-[#011230] flex flex-col items-center justify-center p-6 text-center select-none font-sans">
-        <div className="relative mb-6">
-          <div className="w-16 h-16 rounded-full border-2 border-primary-container/20 border-t-primary-container animate-spin"></div>
-          <Terminal className="text-primary-container absolute inset-0 m-auto" size={24} />
-        </div>
-        <p className="font-mono text-xs text-primary-container uppercase tracking-widest animate-pulse max-w-xs leading-relaxed">
-          SIRIUS BOOTING PROTOCOL... ACTIVE Realtime Database CONNECTED
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen circuit-bg text-on-surface flex flex-col font-sans antialiased pb-20 selection:bg-primary-container/25 selection:text-white">
+    <div className="min-h-screen circuit-bg text-on-surface flex flex-col font-sans antialiased pb-20 selection:bg-primary-container/25 selection:text-white relative">
       
+      {/* Sleek system boot spinner on startup as non-destructive overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-50 bg-[#011230] flex flex-col items-center justify-center p-6 text-center select-none font-sans">
+          <div className="relative mb-6">
+            <div className="w-16 h-16 rounded-full border-2 border-primary-container/20 border-t-primary-container animate-spin"></div>
+            <Terminal className="text-primary-container absolute inset-0 m-auto" size={24} />
+          </div>
+          <p className="font-mono text-xs text-primary-container uppercase tracking-widest animate-pulse max-w-xs leading-relaxed">
+            SIRIUS BOOTING PROTOCOL... ACTIVE Realtime Database CONNECTED
+          </p>
+        </div>
+      )}
+
       {/* Dynamic Settings and Unlock Panels */}
       <AdminBar />
 
@@ -96,7 +95,7 @@ function AppContent() {
             <span>Interactive Realtime CMS Console • Mode: {isEditMode ? "Admin Override" : "Public Viewer"}</span>
           </div>
           <p className="font-headline font-semibold text-primary-fixed tracking-tight">
-            © 2026 {about.title || "My robot Sirius"}. All rights reserved.
+            <span>© 2026 {about.title || "My robot Sirius"}. All rights reserved.</span>
           </p>
           <p className="font-mono text-[10px] text-on-surface-variant/40 leading-relaxed max-w-md">
             Development telemetry active. Live synchronize pipelines connected. Built with Google AI Studio and Firebase Firestore Enterprise.
@@ -110,8 +109,11 @@ function AppContent() {
 
 export default function App() {
   return (
-    <DatabaseProvider>
-      <AppContent />
-    </DatabaseProvider>
+    <ErrorBoundary>
+      <DatabaseProvider>
+        <AppContent />
+      </DatabaseProvider>
+    </ErrorBoundary>
   );
 }
+

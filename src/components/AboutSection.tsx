@@ -155,18 +155,18 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onEdit }) => {
             </p>
 
             <h1 className="font-headline text-[38px] lg:text-[56px] font-bold text-on-surface leading-[1.1] tracking-tight typing-cursor">
-              {about.aboutTitle || "Building robot, and coding "}
+              <span>{about.aboutTitle || "Building robot, and coding "}</span>
             </h1>
 
             <p className="font-headline text-lg lg:text-xl font-medium text-primary-fixed-dim">
-              {about.aboutSubtitle || "로봇을 만들고, 코딩을 하는 과정을 소개"}
+              <span>{about.aboutSubtitle || "로봇을 만들고, 코딩을 하는 과정을 소개"}</span>
             </p>
 
             <div className="glass-panel p-6 rounded-xl card-border neon-glow relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary-container/40 to-transparent"></div>
               
               <p className="text-on-surface-variant leading-relaxed text-sm lg:text-base whitespace-pre-wrap">
-                {about.aboutDescription || "저는 로봇을 만들고 코딩하며 문제를 해결하는 것을 좋아합니다. 센서와 모터를 활용해 로봇이 스스로 움직이도록 만드는 과정에 관심이 있습니다. 실패한 로봇을 다시 수정하고 테스트하면서 더 나은 해결 방법을 찾는 과정을 배우고 있습니다."}
+                <span>{about.aboutDescription || "저는 로봇을 만들고 코딩하며 문제를 해결하는 것을 좋아합니다. 센서와 모터를 활용해 로봇이 스스로 움직이도록 만드는 과정에 관심이 있습니다. 실패한 로봇을 다시 수정하고 테스트하면서 더 나은 해결 방법을 찾는 과정을 배우고 있습니다."}</span>
               </p>
 
               <div className="mt-5 inline-flex items-center gap-2.5 px-4 py-2 bg-primary-container/10 border border-primary-container/30 rounded-full text-primary-container font-mono text-[11px] lg:text-xs">

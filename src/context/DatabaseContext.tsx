@@ -63,11 +63,12 @@ export const useDatabase = () => {
 
 export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [about, setAbout] = useState<AboutData>(initialAbout);
-  const [experiences, setExperiences] = useState<ExperienceData[]>([]);
-  const [skills, setSkills] = useState<SkillData[]>([]);
-  const [certifications, setCertifications] = useState<CertificationData[]>([]);
-  const [portfolio, setPortfolio] = useState<PortfolioData[]>([]);
+  const [experiences, setExperiences] = useState<ExperienceData[]>(initialExperiences);
+  const [skills, setSkills] = useState<SkillData[]>(initialSkills);
+  const [certifications, setCertifications] = useState<CertificationData[]>(initialCertifications);
+  const [portfolio, setPortfolio] = useState<PortfolioData[]>(initialPortfolio);
   const [loading, setLoading] = useState(true);
+  const isSeedingRef = React.useRef(false);
   
   // Persist edit mode temporarily in session state
   const [isEditMode, setIsEditModeState] = useState(() => {
@@ -81,7 +82,8 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Seeding action to pre-fill the database with standard portfolio content
   const triggerSeed = async () => {
-    setLoading(true);
+    if (isSeedingRef.current) return;
+    isSeedingRef.current = true;
     try {
       // 1. Seed About
       await setDoc(doc(db, 'siteContent', 'main'), {
@@ -137,16 +139,22 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       console.log("Database successfully seeded with standard Sirius assets");
     } catch (err) {
-      handleFirestoreError(err, OperationType.WRITE, 'seeding');
+      console.warn("Seeding notice (might already be populated or permission issue):", err);
     } finally {
       setLoading(false);
+      isSeedingRef.current = false;
     }
   };
 
   // 1. Realtime Listeners for synchronization
   useEffect(() => {
-    let activeListenersCount = 0;
     const cleanupFns: (() => void)[] = [];
+
+    // Fallback timer: ensure loading screen resolves within 2 seconds even if Firestore has latency
+    const safetyTimer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    cleanupFns.push(() => clearTimeout(safetyTimer));
 
     // Listener A: About Context Document
     const mainDocRef = doc(db, 'siteContent', 'main');
@@ -157,61 +165,78 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         // Automatically trigger seeding on first-load if database is empty
         triggerSeed();
       }
+      setLoading(false);
     }, (err) => {
-      console.warn("About Section load failed (likely not seeded yet):", err);
+      console.warn("About Section load failed (using default):", err);
+      setLoading(false);
     });
     cleanupFns.push(unsubAbout);
 
     // Listener B: Experiences (Ordered by SortOrder)
     const expColRef = query(collection(db, 'experiences'), orderBy('sortOrder', 'asc'));
     const unsubExp = onSnapshot(expColRef, (snapshot) => {
-      const list: ExperienceData[] = [];
-      snapshot.forEach((d) => {
-        list.push({ id: d.id, ...d.data() } as ExperienceData);
-      });
-      setExperiences(list);
+      if (!snapshot.empty) {
+        const list: ExperienceData[] = [];
+        snapshot.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as ExperienceData);
+        });
+        setExperiences(list);
+      }
+      setLoading(false);
     }, (err) => {
-      handleFirestoreError(err, OperationType.GET, 'experiences');
+      console.warn("Experiences load failed (using default):", err);
+      setLoading(false);
     });
     cleanupFns.push(unsubExp);
 
     // Listener C: Skills
     const skillColRef = query(collection(db, 'skills'), orderBy('sortOrder', 'asc'));
     const unsubSkill = onSnapshot(skillColRef, (snapshot) => {
-      const list: SkillData[] = [];
-      snapshot.forEach((d) => {
-        list.push({ id: d.id, ...d.data() } as SkillData);
-      });
-      setSkills(list);
+      if (!snapshot.empty) {
+        const list: SkillData[] = [];
+        snapshot.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as SkillData);
+        });
+        setSkills(list);
+      }
+      setLoading(false);
     }, (err) => {
-      handleFirestoreError(err, OperationType.GET, 'skills');
+      console.warn("Skills load failed (using default):", err);
+      setLoading(false);
     });
     cleanupFns.push(unsubSkill);
 
     // Listener D: Certifications
     const certColRef = query(collection(db, 'certifications'), orderBy('sortOrder', 'asc'));
     const unsubCert = onSnapshot(certColRef, (snapshot) => {
-      const list: CertificationData[] = [];
-      snapshot.forEach((d) => {
-        list.push({ id: d.id, ...d.data() } as CertificationData);
-      });
-      setCertifications(list);
+      if (!snapshot.empty) {
+        const list: CertificationData[] = [];
+        snapshot.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as CertificationData);
+        });
+        setCertifications(list);
+      }
+      setLoading(false);
     }, (err) => {
-      handleFirestoreError(err, OperationType.GET, 'certifications');
+      console.warn("Certifications load failed (using default):", err);
+      setLoading(false);
     });
     cleanupFns.push(unsubCert);
 
     // Listener E: Portfolio Grid (Ordered by SortOrder)
     const portColRef = query(collection(db, 'portfolio'), orderBy('sortOrder', 'asc'));
     const unsubPort = onSnapshot(portColRef, (snapshot) => {
-      const list: PortfolioData[] = [];
-      snapshot.forEach((d) => {
-        list.push({ id: d.id, ...d.data() } as PortfolioData);
-      });
-      setPortfolio(list);
+      if (!snapshot.empty) {
+        const list: PortfolioData[] = [];
+        snapshot.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as PortfolioData);
+        });
+        setPortfolio(list);
+      }
       setLoading(false);
     }, (err) => {
-      handleFirestoreError(err, OperationType.GET, 'portfolio');
+      console.warn("Portfolio load failed (using default):", err);
+      setLoading(false);
     });
     cleanupFns.push(unsubPort);
 

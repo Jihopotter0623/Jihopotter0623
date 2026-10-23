@@ -75,9 +75,9 @@ export const SkillsSection: React.FC = () => {
         {skills.length === 0 ? (
           <p className="text-xs text-on-surface-variant/40 py-4">등록된 기술 가 없습니다.</p>
         ) : (
-          skills.map((skill) => (
+          skills.map((skill, index) => (
             <div 
-              key={skill.id}
+              key={skill.id ? `skill-${skill.id}` : `skill-idx-${index}`}
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-container/5 border border-primary-container/20 rounded-full text-xs font-semibold text-primary-container hover:bg-primary-container/10 transition-colors uppercase cursor-default relative group"
             >
               <Tag size={12} className="opacity-60" />

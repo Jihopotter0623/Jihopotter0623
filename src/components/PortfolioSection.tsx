@@ -55,9 +55,9 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onAdd, onEdi
         {visibleItems.length === 0 ? (
           <p className="col-span-full text-center text-xs text-on-surface-variant/40 py-12">등록된 포트폴리오 결과물이 없습니다.</p>
         ) : (
-          visibleItems.map((item) => (
+          visibleItems.map((item, index) => (
             <div 
-              key={item.id}
+              key={item.id ? `port-${item.id}` : `port-idx-${index}`}
               className={`glass-panel border rounded-xl overflow-hidden shadow-md flex flex-col hover:-translate-y-1.5 transition-all duration-300 relative group select-none ${
                 item.isVisible ? 'border-surface-variant/30' : 'border-dashed border-red-500/20 opacity-75'
               }`}
@@ -66,7 +66,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onAdd, onEdi
               {!item.isVisible && (
                 <div className="absolute top-3 left-3 z-10 bg-red-950/80 text-red-200 text-[10px] font-mono px-2 py-0.5 rounded border border-red-500/30 flex items-center gap-1">
                   <EyeOff size={10} />
-                  숨김 항목
+                  <span>숨김 항목</span>
                 </div>
               )}
 
@@ -103,25 +103,27 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onAdd, onEdi
               {/* Details card content */}
               <div className="p-5 flex-grow flex flex-col">
                 <h3 className="font-headline text-base font-bold text-on-surface line-clamp-1 mb-1.5 tracking-tight group-hover:text-primary-container transition-colors">
-                  {item.title}
+                  <span>{item.title}</span>
                 </h3>
                 
                 <p className="text-on-surface-variant text-[13px] line-clamp-2 leading-relaxed flex-grow mb-4">
-                  {item.description}
+                  <span>{item.description}</span>
                 </p>
 
                 {/* Tags preview snippet */}
                 <div className="flex flex-wrap gap-1.5 mb-5 overflow-hidden h-[22px]">
-                  {item.tags.split(',').slice(0, 2).map((tag, idx) => (
+                  {(item.tags || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 2).map((tag, idx) => (
                     <span 
-                      key={idx} 
+                      key={`tag-${item.id}-${idx}`} 
                       className="px-2 py-0.5 bg-surface-container-high border border-surface-variant/30 rounded text-[10px] font-medium text-on-surface-variant tracking-tight shrink-0"
                     >
-                      {tag.trim()}
+                      {tag}
                     </span>
                   ))}
-                  {item.tags.split(',').length > 2 && (
-                    <span className="text-[10px] text-on-surface-variant/50 self-center shrink-0">+{item.tags.split(',').length - 2}</span>
+                  {(item.tags || '').split(',').map(t => t.trim()).filter(Boolean).length > 2 && (
+                    <span className="text-[10px] text-on-surface-variant/50 self-center shrink-0">
+                      +{(item.tags || '').split(',').map(t => t.trim()).filter(Boolean).length - 2}
+                    </span>
                   )}
                 </div>
 
@@ -131,7 +133,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onAdd, onEdi
                   className="w-full text-center py-2 bg-primary-container/5 border border-primary-container/20 text-primary-container hover:bg-primary-container hover:text-surface-container-lowest text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer md:text-sm"
                 >
                   <Eye size={14} />
-                  자세히 보기
+                  <span>자세히 보기</span>
                 </button>
               </div>
 
@@ -175,28 +177,28 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onAdd, onEdi
               </div>
 
               <h3 className="font-headline text-lg md:text-2xl font-bold text-on-surface tracking-tight">
-                {activeDetailItem.title}
+                <span>{activeDetailItem.title}</span>
               </h3>
 
               {/* Dynamic tag list */}
               <div className="flex flex-wrap gap-2 pt-1 pb-3 border-b border-surface-variant/20">
-                {activeDetailItem.tags.split(',').map((tag, idx) => (
+                {(activeDetailItem.tags || '').split(',').map(t => t.trim()).filter(Boolean).map((tag, idx) => (
                   <span 
-                    key={idx} 
+                    key={`modal-tag-${idx}`} 
                     className="inline-flex items-center gap-1 px-3 py-1 bg-primary-container/10 border border-primary-container/20 rounded-full text-xs font-semibold text-primary-container"
                   >
                     <Tag size={10} className="opacity-70" />
-                    {tag.trim()}
+                    <span>{tag}</span>
                   </span>
                 ))}
               </div>
 
               <div className="space-y-4 pt-1">
                 <h4 className="font-headline text-sm font-bold text-on-surface-variant uppercase tracking-wider">
-                  Project Description
+                  <span>Project Description</span>
                 </h4>
                 <p className="text-on-surface-variant text-sm md:text-base leading-relaxed whitespace-pre-wrap">
-                  {activeDetailItem.description}
+                  <span>{activeDetailItem.description}</span>
                 </p>
               </div>
 

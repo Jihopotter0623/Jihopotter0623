@@ -59,7 +59,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ onAdd, o
               const isEven = index % 2 === 0;
               return (
                 <div 
-                  key={exp.id || index}
+                  key={exp.id ? `exp-${exp.id}` : `exp-idx-${index}`}
                   className={`relative flex flex-col lg:flex-row ${isEven ? 'lg:justify-start' : 'lg:justify-end'}`}
                 >
                   
@@ -102,11 +102,11 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ onAdd, o
                       </div>
 
                       <h3 className="font-headline text-base lg:text-lg font-bold text-on-surface mb-2 tracking-tight">
-                        {exp.title}
+                        <span>{exp.title}</span>
                       </h3>
                       
                       <p className="text-on-surface-variant text-xs lg:text-sm whitespace-pre-wrap leading-relaxed">
-                        {exp.description}
+                        <span>{exp.description}</span>
                       </p>
                     </div>
 

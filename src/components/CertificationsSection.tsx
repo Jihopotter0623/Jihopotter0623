@@ -68,9 +68,9 @@ export const CertificationsSection: React.FC<CertificationsSectionProps> = ({ on
         {certifications.length === 0 ? (
           <p className="col-span-full text-center text-xs text-on-surface-variant/40 py-8">등록된 이력이 없습니다.</p>
         ) : (
-          certifications.map((cert) => (
+          certifications.map((cert, index) => (
             <div 
-              key={cert.id}
+              key={cert.id ? `cert-${cert.id}` : `cert-idx-${index}`}
               className="glass-panel p-6 rounded-xl card-border flex items-start gap-4 hover:neon-glow transition-all duration-300 relative group overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-1 h-full bg-primary-container/20"></div>
@@ -103,10 +103,10 @@ export const CertificationsSection: React.FC<CertificationsSectionProps> = ({ on
               {/* Contents */}
               <div className="space-y-1">
                 <h3 className="font-headline text-sm lg:text-base font-bold text-on-surface leading-tight tracking-tight pr-14">
-                  {cert.title}
+                  <span>{cert.title}</span>
                 </h3>
                 <p className="font-mono text-[10px] text-primary-container uppercase tracking-wide">
-                  {cert.subtitle}
+                  <span>{cert.subtitle}</span>
                 </p>
               </div>
 
